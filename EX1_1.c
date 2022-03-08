@@ -37,7 +37,6 @@ int main(void){
     // printf("newlen: %d\n", newlen);
 
 
-    
     //check parameter
     if(check_parameter(para) == FALSE)
         fprintf(stderr, "The input format: string1 string2 [parameter]");
