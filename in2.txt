@@ -1,3 +1,3 @@
-he it
-he@!#is&our$new*TA#called!?Bo-Zheng,Chen.
-It is ok not entering the parameters.
+he it -i
+He is our new TA called Bo-Zheng,Chen.
+Cause the parameter “-i”, He has been replaced with it.
