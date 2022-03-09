@@ -60,7 +60,7 @@ int main(void){
             }
             
             int arclen = strlen(arc);
-            arc[arclen - 1] = '\0';
+            arc[arclen] = '\0';
 
             // printf("cur's arc: %s\n", arc);
 
@@ -105,23 +105,26 @@ int main(void){
 
                         char res[reslen];
                         int i = 0;
+                        int res_i = 0;
+                        char *tmp_ptr = tmp;
 
                         while(i < reslen){
-                            char *tmp_ptr = tmp;
                             for (tmp_ptr ; tmp_ptr < needle; tmp_ptr++){
-                                res[i] = token[i];
+                                res[res_i] = token[i];
+                                res_i++;
                                 i++;
                             }
                             for (int j = 0; j < newlen; j++){
-                                res[i] = new[j];
+                                res[res_i] = new[j];
+                                res_i++;
+                            }
+                            for (int k = 0; k < oldlen; k++){
+                                tmp_ptr++;
                                 i++;
                             }
-
-                            for (int k = 0; k < oldlen; k++)
-                                tmp_ptr++;
-                                
-                            for (tmp_ptr ; *tmp_ptr!='\0' ; tmp_ptr++){
-                                res[i] = token[i];
+                            for (tmp_ptr; *tmp_ptr != '\0'; tmp_ptr++){
+                                res[res_i] = token[i];
+                                res_i++;
                                 i++;
                             }
                         }
@@ -131,6 +134,7 @@ int main(void){
                     }
 
                 }
+                
                 //Case sense
                 else{
                     needle = strstr(token, old);
@@ -154,7 +158,7 @@ int main(void){
                             }
                             
                             for (int k = 0; k < oldlen;k++)
-                                ptr++;  
+                                ptr++;
 
                             for ( ; *ptr!='\0' ; ptr++){
                                 res[i] = *ptr;

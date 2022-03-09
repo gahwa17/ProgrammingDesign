@@ -1,0 +1,4 @@
+a A -i
+cccabcdXXabcdXA
+acaABCdXXXabcdA
+acaabcdXXXA
