@@ -5,17 +5,14 @@ int read_line();
 
 int main()
 {
-    char str[80] = " ";
+    char str[80] = "   ";
     read_line(str, 100);
     char s[10] = " !?_\n\t,.";
-    // char *token;
 
     char *old;
     char *new;
     char *para;
 
-    // int cur = 0;
-    /* get the first token */
     old = strtok(str, s);
     new = strtok(NULL, s);
     para = strtok(NULL, s);

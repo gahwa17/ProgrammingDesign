@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -21,107 +22,176 @@ int main(void){
     char delim[10] = " !?_\n\t,.";
 
     read_pattern(pattern, 100);
-    
     old = strtok(pattern, delim);
     new = strtok(NULL, delim);
     para = strtok(NULL, delim);
 
-    // printf("old:%s\n", old);
-    // printf("new:%s\n", new);
-    // printf("para:%s\n", para);
-
-    int oldlen = strlen(old);
-    int newlen = strlen(new);
-
-    // printf("oldlen: %d\n", oldlen);
-    // printf("newlen: %d\n", newlen);
-
 
     //check parameter
-    if(check_parameter(para) == FALSE)
-        fprintf(stderr, "The input format: string1 string2 [parameter]");
+    if(old == NULL)
+        fprintf(stderr, "The input format: string1 string2 [parameter]\n");
+    else if(strtok(NULL, delim)!= NULL || check_parameter(para) == FALSE)
+        fprintf(stderr, "The input format: string1 string2 [parameter]\n");
     else{
+
+        int oldlen = strlen(old);
+        int newlen = strlen(new);
+
+        // printf("oldlen: %d\n", oldlen);
+        // printf("newlen: %d\n", newlen);
+
+
+        printf("old:%s\n", old);
+        printf("new:%s\n", new);
+        printf("para:%s\n", para);
+
+
         fprintf(stderr, "Enter the article: \n");
 
         while(fgets(arc,MAX_ARC,stdin) != NULL){
-
-            // printf("cur's arc:%s", arc);
+            //Case insensitive : old and arc tolowercase
+            if(para != NULL){
+                int i = 0,j=0;
+                while (old[i]){
+                    old[i] = tolower(old[i]);
+                    i++;
+                }
+                printf("new old:%s\n", old);
+            }
             
-            arc[strlen(arc) - 1] = '\0';
+            int arclen = strlen(arc);
+            arc[arclen - 1] = '\0';
+
+            printf("cur's arc: %s\n", arc);
+
+            //filter special char
+            char article_delim[MAX_ARC];
+            int j = 0;
+            for (int i = 0; i < arclen; i++){
+                if (isalnum(arc[i]) == 0 && arc[i] != '-'){
+                    // printf("%c ", arc[i]);
+                    article_delim[j] = arc[i];
+                    j++;
+                }
+            }
+            // printf("\ncur's article_delim: %s\n", article_delim);
 
             
-            char skip[10] = " !?_\n\t,.";
             char *token;
             char *needle;
-            token = strtok(arc, skip);
+            token = strtok(arc, article_delim);
+            
 
             while(token != NULL){
-                int cnt = 0;
+                printf("cur's token is: %s\n", token);
                 int tokenlen = strlen(token);
 
-                needle = strstr(token, old);
-                
-                if(needle != NULL){
-                    // printf("cur's token is: %s\n", token);
-                    // printf("cur needle is: %s\n", needle);
-                    //count how many oldword exist in every token 
-                    for (int i = 0; i < strlen(token); i++){
-                        if(strstr(&token[i],old) == &token[i]){
-                            cnt++;
-                            i = i + oldlen;
-                        }
+                //copy token to tmptoken to deal with case insense
+                char tmp[tokenlen];
+                strcpy(tmp, token); //Init tmp
+
+                // Case insense
+                if (para != NULL){
+                    for (int i = 0; i < tokenlen; i++){
+                        printf("%c ",token[i]);
+                        tmp[i] = tolower(token[i]);
                     }
-                    // printf("cnt : %d\n", cnt);
+                    printf("tmp compare token:%s\n", tmp);
+                    needle = strstr(tmp, old);
 
-                    //create new str to replace old with new
-                    int reslen = tokenlen + (newlen - oldlen) * cnt + 1;
+                    //if token has oldword need to replace
+                    if(needle != NULL){
+                        //create new str to replace old with new
+                        int reslen = tokenlen + (newlen - oldlen) + 1;
 
-                    char res[reslen];
-                    int i = 0;
-                    char *ptr = token;
+                        char res[reslen];
+                        int i = 0;
+                        char *ptr = token;
 
-                    while(i < reslen){
-                        for ( ; ptr < needle; ptr++){
-                            res[i] = *ptr;
-                            i++;
-                        }
-                        for (int j = 0; j < newlen;j++){
-                            res[i] = new[j];
-                            i++;
+                        while(i < reslen){
+                            char *tmp_ptr = tmp;
+                            for (tmp_ptr ; tmp_ptr < needle; tmp_ptr++){
+                                res[i] = token[i];
+                                i++;
+                            }
+                            for (int j = 0; j < newlen; j++)
+                            {
+                                res[i] = new[j];
+                                i++;
+                            }
+
+                            for (int k = 0; k < oldlen; k++){
+                                tmp_ptr++;
+                                i++;
+                            }
+                            for (tmp_ptr ; *tmp_ptr!='\0' ; tmp_ptr++){
+                                res[i] = token[i];
+                                i++;
+                            }
                         }
                         
-                        for (int k = 0; k < oldlen;k++)
-                            ptr++;  
-
-                        for ( ; *ptr!='\0' ; ptr++){
-                            res[i] = *ptr;
-                            i++;
-                        }
+                        res[reslen - 1] = '\0';
+                        printf("%s\n", res);
                     }
-                    
-                    res[reslen - 1] = '\0';
-                    printf("%s\n", res);
+
                 }
-                token = strtok(NULL, skip);
+                //Case sense
+                else{
+                    needle = strstr(token, old);
+                    //if token has oldword need to replace
+                    if(needle != NULL){
+                        //create new str to replace old with new
+                        int reslen = tokenlen + (newlen - oldlen) + 1;
+
+                        char res[reslen];
+                        int i = 0;
+                        char *ptr = token;
+
+                        while(i < reslen){
+                            for ( ; ptr < needle; ptr++){
+                                res[i] = *ptr;
+                                i++;
+                            }
+                            for (int j = 0; j < newlen;j++){
+                                res[i] = new[j];
+                                i++;
+                            }
+                            
+                            for (int k = 0; k < oldlen;k++)
+                                ptr++;  
+
+                            for ( ; *ptr!='\0' ; ptr++){
+                                res[i] = *ptr;
+                                i++;
+                            }
+                        }
+                        
+                        res[reslen - 1] = '\0';
+                        printf("%s\n", res);
+                    }
+                }
+                
+                
+                token = strtok(NULL, article_delim);
             }
             
         }
     }
 }
 
-void read_pattern(char str[], int n)
-{
+void read_pattern(char str[], int n){
     int ch, i = 0;
     while ((ch = getchar()) != '\n'){
-        if (i < n)
-        str[i++] = ch;
-        str[i] = '\0'; /* terminates string */
+        if (i < n){
+            str[i++] = ch;
+            str[i] = '\0'; /* terminates string */
+        }
     }
 }
 
 int check_parameter(char para[]){
     int flag = TRUE;
-    if(para == NULL)
+    if (para == NULL)
         return TRUE;
     else{
         if(strlen(para) != 2 || para[0] != '-' || para[1] != 'i')
@@ -130,6 +200,13 @@ int check_parameter(char para[]){
     return flag;
 }
 
-void tolowcase(){
+// int case_insensitive(char para[]){
+//     if(para != NULL)
+//         return TRUE;
+//     else
+//         return FALSE;
+// }
+
+char* tolowercase(){
 
 }
