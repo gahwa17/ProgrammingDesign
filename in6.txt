@@ -1,4 +1,2 @@
-a A -i
-cccabcdXXabcdXA
-acaABCdXXXabcdA
-acaabcdXXXA
+a A -i -g
+cccabcd XX abcd XA

@@ -7,19 +7,20 @@
 #define MAX_PATN 100
 #define MAX_ARC 4095
 
-int check_parameter(); // check whether parameter is valid
+int check_str();       // check whether pattern is valid
+int check_parameter(); // check whether 3th parameter is valid
 
 int main(void){
-    char arc[MAX_ARC];
+    char pattern[MAX_PATN + 1];
+    char arc[MAX_ARC + 1];
+    char delim[10] = " !?_\n\t,."; //delim of pattern
+
     char *old;
     char *new;
     char *para;
 
     fprintf(stderr, "Enter pattern, replacement, and at most one parameter: \n");
-    char pattern[MAX_PATN];
-    char delim[10] = " !?_\n\t,.";
 
-    //Pattern
     fgets(pattern, MAX_PATN, stdin);
 
     old = strtok(pattern, delim);
@@ -27,11 +28,8 @@ int main(void){
     para = strtok(NULL, delim);
 
 
-    //check parameter
-    if(old == NULL)
-        fprintf(stderr, "The input format: string1 string2 [parameter]");
-    else if(strtok(NULL, delim)!= NULL || check_parameter(para) == FALSE)
-        fprintf(stderr, "The input format: string1 string2 [parameter]");
+    if(strtok(NULL,delim)!=NULL || check_str(new) == FALSE || check_parameter(para) == FALSE)
+        printf("The input format: string1 string2 [parameter]");
     else{
 
         int oldlen = strlen(old);
@@ -40,16 +38,11 @@ int main(void){
         // printf("oldlen: %d\n", oldlen);
         // printf("newlen: %d\n", newlen);
 
-
-        // printf("old:%s\n", old);
-        // printf("new:%s\n", new);
-        // printf("para:%s\n", para);
-
-
         fprintf(stderr, "Enter the article: \n");
 
         while(fgets(arc,MAX_ARC,stdin) != NULL){
-            //Case insensitive : old and arc tolowercase
+
+            //Case insensitive : change old tolowercase
             if(para != NULL){
                 int i = 0;
                 while (old[i]){
@@ -66,6 +59,9 @@ int main(void){
 
             //filter special char
             char article_delim[MAX_ARC];
+            for(int i = 0; i < MAX_ARC; i++)
+				article_delim[i] = '\0';
+
             int j = 0;
             for (int i = 0; i < arclen; i++){
                 if (isalnum(arc[i]) == 0 && arc[i] != '-'){
@@ -84,17 +80,19 @@ int main(void){
 
             while(token != NULL){
                 // printf("cur's token is: %s\n", token);
-                int tokenlen = strlen(token);
-
-                //copy token to tmptoken to deal with case insense
-                char tmp[tokenlen];
-                strncpy(tmp, token,tokenlen); //Init tmp
+                int tokenlen = strlen(token);                
 
                 // Case insense
                 if (para != NULL){
-                    for (int i = 0; i < tokenlen; i++){
+                    // printf("Here is Casse Insense!\n");
+
+                    char tmp[tokenlen + 1];
+                    strncpy(tmp, token, tokenlen); //Init tmp
+    
+                    //save lowercase to tmp
+                    for (int i = 0; i < tokenlen; i++)
                         tmp[i] = tolower(token[i]);
-                    }
+
                     // printf("tmp compare token:%s\n", tmp);
                     needle = strstr(tmp, old);
 
@@ -186,6 +184,25 @@ int check_parameter(char para[]){
     else{
         if(strlen(para) != 2 || para[0] != '-' || para[1] != 'i')
             flag = FALSE;
+    }
+    return flag;
+}
+
+int check_str(char *str){
+    int flag = TRUE;
+    if(str == NULL)
+        flag = FALSE;
+    else{
+        char tmp[strlen(str)];
+        strncpy(tmp,str,strlen(str));
+        for (int i = 0; i < strlen(str); i++)
+        {
+            if (isalnum(tmp[i]) == 0 && tmp[i] != '-'){
+                // printf("checkstr:%c\n", tmp[i]);
+                flag = FALSE;
+                break;
+            }
+        }
     }
     return flag;
 }
