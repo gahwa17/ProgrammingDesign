@@ -54,10 +54,10 @@ int main(void){
             
             int arclen = strlen(arc);
             arc[arclen] = '\0';
-
             // printf("cur's arc: %s\n", arc);
+            // printf("cur's arclen: %d\n", arclen);
 
-            //filter special char
+            //filter special char in article
             char article_delim[MAX_ARC];
             for(int i = 0; i < MAX_ARC; i++)
 				article_delim[i] = '\0';
@@ -70,7 +70,7 @@ int main(void){
                     j++;
                 }
             }
-            // printf("\ncur's article_delim: %s\n", article_delim);
+            // printf("cur's article_delim: %s\n", article_delim);
 
             
             char *token;
@@ -81,19 +81,25 @@ int main(void){
             while(token != NULL){
                 // printf("cur's token is: %s\n", token);
                 int tokenlen = strlen(token);                
+                // printf("cur's tokenlen is: %d\n", tokenlen);
 
                 // Case insense
                 if (para != NULL){
                     // printf("Here is Casse Insense!\n");
 
+                    //tmp: used to save lower case token
                     char tmp[tokenlen + 1];
-                    strncpy(tmp, token, tokenlen); //Init tmp
-    
+                    //Init tmp
+                    for (int i = 0; i < tokenlen;i++)
+                        tmp[i] = '\0';
+
                     //save lowercase to tmp
                     for (int i = 0; i < tokenlen; i++)
                         tmp[i] = tolower(token[i]);
+                    tmp[tokenlen] = '\0';
 
                     // printf("tmp compare token:%s\n", tmp);
+
                     needle = strstr(tmp, old);
 
                     //if token has oldword need to replace
@@ -104,10 +110,10 @@ int main(void){
                         char res[reslen];
                         int i = 0;
                         int res_i = 0;
-                        char *tmp_ptr = tmp;
+                        char *tmp_ptr;
 
                         while(i < reslen){
-                            for (tmp_ptr ; tmp_ptr < needle; tmp_ptr++){
+                            for (tmp_ptr = &tmp[0] ; tmp_ptr < needle; tmp_ptr++){
                                 res[res_i] = token[i];
                                 res_i++;
                                 i++;
@@ -120,7 +126,7 @@ int main(void){
                                 tmp_ptr++;
                                 i++;
                             }
-                            for (tmp_ptr; *tmp_ptr != '\0'; tmp_ptr++){
+                            for ( ; *tmp_ptr != '\0'; tmp_ptr++){
                                 res[res_i] = token[i];
                                 res_i++;
                                 i++;
@@ -141,7 +147,7 @@ int main(void){
                         //create new str to replace old with new
                         int reslen = tokenlen + (newlen - oldlen) + 1;
 
-                        char res[reslen];
+                        char res[4096];
                         int i = 0;
                         char *ptr = token;
 
@@ -194,11 +200,11 @@ int check_str(char *str){
         flag = FALSE;
     else{
         char tmp[strlen(str)];
-        strncpy(tmp,str,strlen(str));
-        for (int i = 0; i < strlen(str); i++)
-        {
+        strncpy(tmp,str,strlen(tmp));
+
+        //check if str exist invalid char
+        for (int i = 0; i < strlen(tmp); i++){
             if (isalnum(tmp[i]) == 0 && tmp[i] != '-'){
-                // printf("checkstr:%c\n", tmp[i]);
                 flag = FALSE;
                 break;
             }
