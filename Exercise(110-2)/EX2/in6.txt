@@ -1,0 +1,2 @@
+a A -i -g
+cccabcd XX abcd XA
