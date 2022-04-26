@@ -6,6 +6,14 @@
 #define FALSE 0
 #define MAX_PATN 100
 #define MAX_ARC 4095
+#define MAX_RES (MAX_ARC + 1)
+
+#define LAST_END(str) str[strlen(str)] = '\0'
+#define INIT(target ,len) for(int i = 0 ; i<len ; i++) {target[i] = '\0';}
+#define LOWER(target,i) while (target[i]){target[i] = tolower(target[i]);i++;}
+
+#define DEBUG
+
 
 int check_str();       // check whether pattern is valid
 int check_parameter(); // check whether 3th parameter is valid
@@ -13,7 +21,7 @@ int check_parameter(); // check whether 3th parameter is valid
 int main(void){
     char pattern[MAX_PATN + 1];
     char arc[MAX_ARC + 1];
-    char delim[10] = " !?_\n\t,."; //delim of pattern
+    char delim[10] = " !?_\r\n,."; //delim of pattern
 
     char *old;
     char *new;
@@ -32,6 +40,26 @@ int main(void){
         printf("The input format: string1 string2 [parameter]");
     else{
 
+        //Case judgement
+        if(para != NULL){
+            #ifdef DEBUG
+                fprintf(stderr,"this is case 1\n");
+            #endif
+            int i = 0;
+            LOWER(old,i);
+            // while (old[i]){
+            //     old[i] = tolower(old[i]);
+            //     i++;
+            // }
+            // printf("new old:%s\n", old);
+        }
+        else{
+            #ifdef DEBUG
+                fprintf(stderr,"this is case 0\n");
+            #endif
+        }
+
+
         int oldlen = strlen(old);
         int newlen = strlen(new);
 
@@ -42,18 +70,10 @@ int main(void){
 
         while(fgets(arc,MAX_ARC,stdin) != NULL){
 
-            //Case insensitive : change old tolowercase
-            if(para != NULL){
-                int i = 0;
-                while (old[i]){
-                    old[i] = tolower(old[i]);
-                    i++;
-                }
-                // printf("new old:%s\n", old);
-            }
             
-            int arclen = strlen(arc);
-            arc[arclen] = '\0';
+            // arc[arclen] = '\0';
+            LAST_END(arc);
+            
             // printf("cur's arc: %s\n", arc);
             // printf("cur's arclen: %d\n", arclen);
 
@@ -62,6 +82,7 @@ int main(void){
             for(int i = 0; i < MAX_ARC; i++)
 				article_delim[i] = '\0';
 
+            int arclen = strlen(arc);
             int j = 0;
             for (int i = 0; i < arclen; i++){
                 if (isalnum(arc[i]) == 0 && arc[i] != '-'){
@@ -79,6 +100,9 @@ int main(void){
             
 
             while(token != NULL){
+                #ifdef DEBUG
+                    fprintf(stderr,"the word is: %s\n", token);
+                #endif
                 // printf("cur's token is: %s\n", token);
                 int tokenlen = strlen(token);                
                 // printf("cur's tokenlen is: %d\n", tokenlen);
@@ -89,9 +113,12 @@ int main(void){
 
                     //tmp: used to save lower case token
                     char tmp[tokenlen + 1];
+
                     //Init tmp
-                    for (int i = 0; i < tokenlen;i++)
-                        tmp[i] = '\0';
+                    INIT(tmp,tokenlen)
+
+                    // for (int i = 0; i < tokenlen;i++)
+                    //     tmp[i] = '\0';
 
                     //save lowercase to tmp
                     for (int i = 0; i < tokenlen; i++)
@@ -107,7 +134,7 @@ int main(void){
                         //create new str to replace old with new
                         int reslen = tokenlen + (newlen - oldlen) + 1;
 
-                        char res[reslen];
+                        char res[MAX_RES];
                         int i = 0;
                         int res_i = 0;
                         char *tmp_ptr;
@@ -132,8 +159,8 @@ int main(void){
                                 i++;
                             }
                         }
-                        
-                        res[reslen - 1] = '\0';
+                        LAST_END(res);
+                        // res[reslen - 1] = '\0';
                         printf("%s\n", res);
                     }
 
@@ -147,7 +174,7 @@ int main(void){
                         //create new str to replace old with new
                         int reslen = tokenlen + (newlen - oldlen) + 1;
 
-                        char res[4096];
+                        char res[reslen];
                         int i = 0;
                         char *ptr = token;
 
@@ -169,8 +196,9 @@ int main(void){
                                 i++;
                             }
                         }
-                        
-                        res[reslen - 1] = '\0';
+
+                        LAST_END(res);
+                        // res[reslen - 1] = '\0';
                         printf("%s\n", res);
                     }
                 }
