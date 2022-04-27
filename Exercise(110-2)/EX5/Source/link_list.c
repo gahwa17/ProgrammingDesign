@@ -57,8 +57,8 @@ void my_delete(struct node* HEAD, char *Name){
 		printf("INVALID OPERATION\n");
 	else{
 		struct node* to_delete = ptr->next;
-		printf("Former is :%d %s\n",ptr->id,ptr->name);
-		printf("To delete is :%d %s\n",to_delete->id,to_delete->name);
+		// printf("Former is :%d %s\n",ptr->id,ptr->name);
+		// printf("To delete is :%d %s\n",to_delete->id,to_delete->name);
 		ptr->next = to_delete->next;
 		free(to_delete);
 	}
@@ -70,32 +70,77 @@ void my_delete(struct node* HEAD, char *Name){
 // NOTICE: don't just swap the node's value
 // You need to break the link and recombine it
 void my_swap(struct node *HEAD, char *Name1, char *Name2){
+	//Find current and previous node of Name1, Name2
+	struct node *cur1,*cur2;
+
+	int flag1 = FALSE, flag2 = FALSE;
+
+	struct node* prev1 = HEAD;
+	struct node* prev2 = HEAD;
+
+	while(prev1->next != NULL){
+		if(strcmp((prev1->next)->name, Name1) != 0)
+			prev1 = prev1->next;
+		else{
+			flag1 = TRUE;
+			cur1 = prev1->next;
+			break;
+		}
+	}
+	while(prev2->next != NULL){
+		if(strcmp((prev2->next)->name, Name2) != 0)
+			prev2 = prev2->next;
+		else{
+			flag2 = TRUE;
+			cur2 = prev2->next;
+			break;
+		}
+	}
+	if(flag1 && flag2){
+		//swap previous nodes
+		prev1->next = cur2;
+		prev2->next = cur1;
+		
+		//swap cur1 and cur2
+		struct node *temp_node = cur2->next;
+		cur2->next = cur1->next;
+		cur1->next = temp_node;
+	}
+	else{
+		printf("INVALID OPERATION\n");
+	}
 
 }
 
 // Print the id of the corresponding Name.
 // If Name doesn’t exit, print “INVALID OPERATION”
 void my_print_id(struct node *HEAD, char *Name){
+	int flag = FALSE;
 	for( ; HEAD != NULL ; HEAD = HEAD->next){
 		if(strcmp(HEAD->name, Name) == 0){
+			flag = TRUE;
 			printf("%d\n",HEAD->id);
 			break;
 		}
 	}
-	printf("INVALID OPERATION\n");
+	if(flag == FALSE)
+		printf("INVALID OPERATION\n");
 }
 
 
 // Print the name of the corresponding ID
 // If ID doesn’t exit, print “INVALID OPERATION”
 void my_print_name(struct node *HEAD, int ID){
+	int flag = FALSE;
 	for( ; HEAD != NULL ; HEAD = HEAD->next){
 	if(HEAD->id == ID){
+		flag = TRUE;
 		printf("%s\n",HEAD->name);
 		break;
 		}		
 	}
-	printf("INVALID OPERATION\n");
+	if(flag == FALSE)
+		printf("INVALID OPERATION\n");
 }
 
 // Print out all the information in the linked list orderly
