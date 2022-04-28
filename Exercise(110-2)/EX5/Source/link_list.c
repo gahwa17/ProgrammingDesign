@@ -24,16 +24,24 @@ void my_insert(struct node* HEAD, int ID, char *Name, int node_id){
 		strcpy(new_node->name, Name);
 		new_node->id = node_id;
 
-		//if there is already other node, then keep it as tmp
-		if(ptr->next != NULL){
-			struct node *tmp = ptr->next;
-			ptr->next = new_node;
-			new_node->next = tmp;
-		}
-		//if there is no node,then just insert it
-		else{
-			ptr->next = new_node;
-		}
+
+		struct node *tmp = ptr->next;
+		ptr->next = new_node;
+		new_node->next = tmp;
+
+		/*
+		*  NOTE: No need to deal with 2 situation, see them as the same
+		*/ 
+		// //if there is already other node, then keep it as tmp
+		// if(ptr->next != NULL){
+		// 	struct node *tmp = ptr->next;
+		// 	ptr->next = new_node;
+		// 	new_node->next = tmp;
+		// }
+		// //if there is no node,then just insert it
+		// else{
+		// 	ptr->next = new_node;
+		// }
 	}
 }
 
