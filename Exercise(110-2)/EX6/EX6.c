@@ -6,7 +6,7 @@
 
 struct node *add_to_end(struct node *start, char *name);
 void print_list(struct node *start, int num);
-void kill_node(struct node *start, int kill);
+void kill_node(struct node *start, int kill, char direction[]);
 int count_node(struct node *start);
 
 struct node{
@@ -18,8 +18,11 @@ struct node{
 int main(void){
     struct node *start = NULL;
     int num, kill;
-    char name[MAX_NAME], *direction;
+    char name[MAX_NAME];
+    char direction[20];
     memset(name, '\0', strlen(name)); //Init
+    memset(direction, '\0', strlen(direction)); //Init
+
 
     scanf("%d", &num);
 
@@ -29,10 +32,12 @@ int main(void){
         start = add_to_end(start, name);
     }
 
-    scanf("%d %s", &kill, &direction);
+    // fflush(stdin); Q: Why does it flush my direction?
+    scanf("%d %s", &kill, direction);
+    // printf("Before function: %s\n",direction);
+    kill_node(start, kill, direction);
     // print_list(start, num);
 
-    kill_node(start, kill);
 }
 
 struct node *add_to_end(struct node *start, char *name){
@@ -72,34 +77,57 @@ void print_list(struct node *start, int num){
     }
 }
 
-void kill_node(struct node *start, int kill){
+void kill_node(struct node *start, int kill, char direction[]){
     struct node *cur = start;
-    struct node *to_kill;
 
-    int left_node;
-
+    int left_node = count_node(cur);
+    // printf("In function: %s\n", direction);
     while (left_node != 1){
-        //Find kill target
-        for (int i = 0; i < kill ; i++){
-            cur = cur->next;
-            to_kill = cur;
+        struct node *to_kill = NULL;
+        //CLOCKWISE
+        if(strcmp(direction, "CLOCKWISE") == 0){
+            //Find kill target
+            for (int i = 0; i < kill ; i++){
+                cur = cur->next;
+                to_kill = cur;
+            }
+            // printf("---Before kill---\n");
+            // printf("to_kill node:%s\n", to_kill->name);
+
+            //Modify pointer
+            (to_kill->next)->prev = to_kill->prev;
+            (to_kill->prev)->next = to_kill->next;
+            cur = to_kill->next;
+
+            //Kill node
+            printf("%s KILLED\n", to_kill->name);
+            free(to_kill);
+
+            // printf("---After kill---\n");
+            // printf("cur node:%s\n", cur->name);
         }
+        else{
+            //Find kill target
+            for (int i = 0; i < kill ; i++){
+                cur = cur->prev;
+                to_kill = cur;
+            }
+            // printf("---Before kill---\n");
+            // printf("to_kill node:%s\n", to_kill->name);
 
-        // printf("---Before kill---\n");
-        // printf("to_kill node:%s\n", to_kill->name);
+            //Modify pointer
+            (to_kill->next)->prev = to_kill->prev;
+            (to_kill->prev)->next = to_kill->next;
+            cur = to_kill->prev;
 
-        //Modify pointer
-        (to_kill->next)->prev = to_kill->prev;
-        (to_kill->prev)->next = to_kill->next;
-        cur = to_kill->next;
+            //Kill node
+            printf("%s KILLED\n", to_kill->name);
+            free(to_kill);
 
-        //Kill node
-        printf("%s KILLED\n", to_kill->name);
-        free(to_kill);
-
-        // printf("---After kill---\n");
-        // printf("cur node:%s\n", cur->name);
-
+            // printf("---After kill---\n");
+            // printf("cur node:%s\n", cur->name);
+        }
+        
         left_node = count_node(cur);
         // printf("left node: %d\n",left_node);
     }
