@@ -90,10 +90,10 @@ void write_line(void)
   // printf("line_len: %d\n",line_len);
   // printf("space_remaining: %d\n",space_remaining());
 
-  int char_to_print = 0;
+  
   struct line *to_print = first;
 
-  while(char_to_print < line_len && to_print->next != NULL){
+  while(to_print != NULL){
     //print word
     printf("%s",to_print->word);
 
@@ -104,8 +104,7 @@ void write_line(void)
         putchar(' ');
       extra_spaces -= spaces_to_insert;
     }
-
-    char_to_print += strlen(to_print->word) + 1;
+    
     num_words--;
     to_print = to_print->next;
   }
