@@ -38,12 +38,12 @@ int main(void){
     for(int i = 0 ; i < pokemon_num ; i++)
         scanf("%s %s %d %d",list[i].NAME, list[i].ATTR, &list[i].ATK, &list[i].HP);
    
-    print_data(list, pokemon_num);
+    // print_data(list, pokemon_num);
 
     // 讀入當前CASE，將對應排序印出
     for(int i = 0 ; i < case_num ; i++){
-        printf("Case #%d:\n",i+1);
-
+        printf("Case #%d:\n", i+1);
+        
         char case_name[MAX_LEN];
         scanf("%s", case_name);
 
@@ -71,6 +71,8 @@ int main(void){
             print_data(list, pokemon_num);
         }
     }
+
+    return 0;
 }
 
 int compare_priority(Pokemon *Pokemon_A, Pokemon *Pokemon_B){
@@ -126,7 +128,7 @@ int compare(const void *a, const void *b){
     if(_case == 1)
         return Pokemon_B->ATK - Pokemon_A->ATK; //大->小
     if(_case == 2)
-        return strcmp(Pokemon_A->NAME, Pokemon_B->NAME);
+        return strcmp(Pokemon_A->NAME, Pokemon_B->NAME); //字典排序
     if(_case == 3){
         int difference = compare_priority(Pokemon_A, Pokemon_B);
         if(difference > 0)
