@@ -1,2 +1,2 @@
-a A -i -g
-cccabcd XX abcd XA
+he i-t
+The debug test.

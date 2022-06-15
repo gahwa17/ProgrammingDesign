@@ -29,8 +29,9 @@ int main(void){
     BOOL num_valid = FALSE;
 
     //Create poly
-    struct poly Mypoly;
-    struct poly *ptr = &Mypoly;
+    struct poly *ptr = malloc(sizeof(struct poly));
+    // struct poly Mypoly;
+    // struct poly *ptr = &Mypoly;
 
     //Check input_term
     do{
@@ -112,7 +113,7 @@ void Eval(const struct poly *p){
     for(int i = 0 ; i < p->times ; i++){
         int ans = 0;
         int num = p->num[i];
-        for(int j = 0 ; j < p-> term ; j++)
+        for(int j = 0 ; j < p->term ; j++)
             ans += p->cof[j] * pow(num , p->exp[j]);
         printf("%d\n",ans);
     }
